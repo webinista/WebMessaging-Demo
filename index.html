@@ -31,6 +31,13 @@
 
 			postmsg = function(msg){
 				var iframewin = iframe.contentWindow;
+				/*
+				 Web messaging allows cross-domain communication.
+				 You could also send this to a document on another
+				 domain by changing the second parameter. That document
+				 would have to have an event listener. Be sure to check
+				 that the domain is allowed from your recipient document.
+				*/
 				iframewin.postMessage(msg,'http://people.opera.com');
 			}
 
