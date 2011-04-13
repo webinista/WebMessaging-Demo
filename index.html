@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+	<meta charset="UTF-8">
+	<title>Web messaging demo</title>
+	<style>
+	h1{color:#c00;}
+	body{font: 95% / 1.5 sans-serif;}
+	iframe{width:100%; height:500px; border:1px solid #606;display:block;}
+	button{display:block; margin:1em 0}
+	</style>
+</head>
+<body>
+	<h1>Web Messaging Demo</h1>
+	<p>Every three seconds, the <code>iframe</code> will get appended with "Hello World." Click the button to stop.	</p>
+
+	<p><a href="http://www.w3.org/TR/webmessaging/">Web Messaging specification</a></p>
+
+	<div><button>Stop messaging</button></div>
+
+	<iframe src="iframe_document.html"></iframe>
+
+	<script>
+	// using this so we can encapsulate the variables. could also use an object i spose
+	(function(){
+		function sendmsg(){
+			var postmsg, intv, buttonClickHandler, stopped = false;
+
+			var button = document.querySelector('button'),
+				iframe = document.querySelector('iframe');
+
+			postmsg = function(msg){
+				var iframewin = iframe.contentWindow;
+				iframewin.postMessage(msg,'http://people.opera.com');
+			}
+
+			// every 3 seconds (give or take) run this function
+			intv = setInterval(postmsg,3000,'Hello world!');
+
+			buttonClickHandler = function(e){
+				if(stopped === false){
+					clearInterval(intv); // stop posting messages.
+					postmsg('<b class="highlight" style="background:#fc0">Updating stopped!</b>');
+					button.innerHTML = 'Messaging stopped';
+					button.removeEventListener('click', buttonClickHandler);
+					stopped = true;
+				}
+			}
+
+			button.addEventListener('click', buttonClickHandler, false);
+
+			window.addEventListener('unload', function(e){ clearInterval(intv); }, false);
+		}
+
+		// postMessage needs to happen within an event handler.
+		window.addEventListener('load',sendmsg,false);
+	})();
+
+	</script>
+</body>
+</html>
